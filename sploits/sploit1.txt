@@ -1,1 +1,6 @@
-Use this file to explain how your sploit1 works.
+       Sploit1 was a simple buffer overflow attack. target1.c allows the user to pass in a buffer of size 240 into bar(), as well as an
+additional input that can be of any size. The exploit is that bar() uses strcpy() which doesn't check that the size of the input
+and instead keeps copying until a null character is found.
+        To take advantage of this we created a buffer of size 248 and initially filled it completely with NOPs. We then placed shellcode, making sure to leave the last four bytes of our buffer open. In these last our bytes we put an address that is in the middle of the
+NOP's sled. Putting it all together, when strcpy is executed the extra 8 bits will overwrite the saved frame pointer as well as the
+return address. The "new" return address will jump into our NOP sled which will then run our shell code, giving us a root shell.
