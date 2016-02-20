@@ -1,1 +1,13 @@
-Use this file to explain how your sploit3 works.
+        The bug in target 3 is an integer overflow bug. The program requires you to enter in a string
+that represents a count for the number of widgets they want to create, followed by data for said
+widgets. Where we take advantage of the target is within foo() when count is compared to MAX_WIDGETS.
+        In our exploit we create a buffer of size 4820. We set up our exploit with the first 
+couple of bytes set to an absurdly large number to use as the count. We use the value 
+2147483889. The rest of the exploit buffer is then filled with NOP's, the shellcode, and the 
+address of the shellcode. When this huge number is passed from main to foo, it is interpreted as a
+signed integer and the program thinks it is actually (-2147483407). Because it is a negative number, 
+it will pass the count < MAX_WIDGET comparision in foo(). In foo this number is then multiplied 
+by the size of the widget_t struct (20 bytes). Multiplying this large number by 20 results in 
+the leading bit in the binary representation to be dropped, and the result becomes 4820. Since 
+this is the length of our buffer, it will overwrite the EIP with a pointer back into our NOP's sled,
+and then will execute our code to create a root shell.
