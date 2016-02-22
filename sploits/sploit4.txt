@@ -5,7 +5,8 @@ frees q again, which would normally do nothing. However, since we just used obsd
 a chunk header to that location it will cause free() to write 4 bytes to anywhere we choose in
 memory.
         First we will create a chunk q, then create two additional chunks for the left and right
-pointers on either side of q. The right chunk will be located higher in memory, and the left chunk is located lower. We will set the FREEBIT for all of these to 1 so that free() will continue trying
+pointers on either side of q. The right chunk will be located higher in memory, and the left chunk
+is located lower. We will set the FREEBIT for all of these to 1 so that free() will continue trying
 to free them.
         In tmalloc.c we can use the code at lines 117 and 118 to use this exploit. Line 117 is
 q->s.r = p->s.r;. What this does is copies the right pointer of our chunk(q) to the right pointer of
@@ -16,4 +17,4 @@ freed up.  How we can take advantage of this is we can set the left pointer for 
 chunk to be whatever address we want. The only thing left it so jump over the garbage that is left
 when the memory is free. From the Phrack article we use \xeb\x0c to jump 12 bytes into our NOP sled,
 which rides right into our shellcode.
-~                                      
+                                     
