@@ -15,6 +15,6 @@ does is it writes the left pointer of the next chunk to the location specified b
 chunk. Essential it removes p from the linked list of pointers so that that area of memory becomes
 freed up.  How we can take advantage of this is we can set the left pointer for the right
 chunk to be whatever address we want. The only thing left it so jump over the garbage that is left
-when the memory is free. From the Phrack article we use \xeb\x0c to jump 12 bytes into our NOP sled,
-which rides right into our shellcode.
+when the memory is free. From the Phrack article we use \xeb\x0c to jump 12 bytes into the address
+of our NOP sled, which rides right into our shellcode.
                                      
