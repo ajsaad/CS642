@@ -1,1 +1,13 @@
-Use this file to explain how your sploit2 works.
+        Like sploit1 this was also a buffer overlow exploit, however this time we only have
+access to overflow by one byte. This bug happens in nstrcpy() where the for loop iterates from 0
+to len instead of len-1. Overflowing this allows us to overwrite the least significant byte of
+the saved frame pointer.
+        When the nstrcpy() function ends the saved frame pointer becomes the stack pointer again.
+However with our exploit the least significant byte of this will get over written. Then, 4 will be
+added to this value, and whatever value is that at address is what will be put into EIP. This means
+we can alter the frame pointer to jump to a return address that contains our shellcode.
+        For our exploit we made a buffer with one more byte than the targets nstrcpy can handle
+(241 bytes). We then again filled it with x90 NOPs, then the shellcode, then the address of our
+shellcode, and then the final byte is the byte that we want to over write the last byte of the
+saved frame pointer with, which we picked as the value \x6c. This way the address that is popped
+into the EIP will start execution in our NOP sled, and then eventually the shellcode.
