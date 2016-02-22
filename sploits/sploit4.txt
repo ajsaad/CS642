@@ -1,1 +1,19 @@
-Use this file to explain how your sploit4 works.
+        Sploit4 uses a double free vulnerability to gain root access. Looking at the target file
+we can see that the pointer q is freed twice. Since the input is copied into the address pointed
+to by p we can actually write to where the old q chunk was. After obsd_strlcpy returns the program
+frees q again, which would normally do nothing. However, since we just used obsd_strlcopy to write
+a chunk header to that location it will cause free() to write 4 bytes to anywhere we choose in
+memory.
+        First we will create a chunk q, then create two additional chunks for the left and right
+pointers on either side of q. The right chunk will be located higher in memory, and the left chunk is located lower. We will set the FREEBIT for all of these to 1 so that free() will continue trying
+to free them.
+        In tmalloc.c we can use the code at lines 117 and 118 to use this exploit. Line 117 is
+q->s.r = p->s.r;. What this does is copies the right pointer of our chunk(q) to the right pointer of
+to the chunk following it on the heap. Line 118 is p->s.r->s.l = q; What this line
+does is it writes the left pointer of the next chunk to the location specified by the current
+chunk. Essential it removes p from the linked list of pointers so that that area of memory becomes
+freed up.  How we can take advantage of this is we can set the left pointer for the right
+chunk to be whatever address we want. The only thing left it so jump over the garbage that is left
+when the memory is free. From the Phrack article we use \xeb\x0c to jump 12 bytes into our NOP sled,
+which rides right into our shellcode.
+~                                      
